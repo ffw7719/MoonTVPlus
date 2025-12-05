@@ -22,8 +22,8 @@
 ## 🎉 相对原版新增内容
 
 - 🎮 **外部播放器跳转**：支持 PotPlayer、VLC、MPV、MX Player、nPlayer、IINA 等多种外部播放器
-- ✨ **视频超分 (Anime4K)**：使用 WebGPU 技术实现实时视频画质增强（支持 2x/3x/4x 超分）
-- 💬 **弹幕系统**：完整的弹幕搜索、匹配、加载功能，支持弹幕设置持久化
+- ✨ **视频超分 (Anime4K)**：使用 WebGPU 技术实现实时视频画质增强（支持 1.5x/2x/3x/4x 超分）
+- 💬 **弹幕系统**：完整的弹幕搜索、匹配、加载功能，支持弹幕设置持久化、弹幕屏蔽
 - 📝 **豆瓣评论抓取**：自动抓取并展示豆瓣电影短评，支持分页加载
 
 ## ✨ 功能特性
@@ -249,6 +249,7 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 | NEXT_PUBLIC_DOUBAN_IMAGE_PROXY      | 自定义豆瓣图片代理 URL                       | url prefix                       | (空)                                                                                                                       |
 | NEXT_PUBLIC_DISABLE_YELLOW_FILTER   | 关闭色情内容过滤                             | true/false                       | false                                                                                                                      |
 | NEXT_PUBLIC_FLUID_SEARCH | 是否开启搜索接口流式输出 | true/ false | true |
+| NEXT_PUBLIC_PROXY_M3U8_TOKEN | M3U8 代理 API 鉴权 Token（外部播放器跳转时的鉴权token，不填为无鉴权） | 任意字符串 | (空) |
 
 NEXT_PUBLIC_DOUBAN_PROXY_TYPE 选项解释：
 

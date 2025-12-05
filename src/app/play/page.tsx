@@ -62,6 +62,9 @@ function PlayPageClient() {
   const searchParams = useSearchParams();
   const enableComments = useEnableComments();
 
+  // 获取 Proxy M3U8 Token
+  const proxyToken = typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_PROXY_M3U8_TOKEN || '' : '';
+
   // -----------------------------------------------------------------------------
   // 状态变量（State）
   // -----------------------------------------------------------------------------
@@ -3420,8 +3423,9 @@ function PlayPageClient() {
                           onClick={(e) => {
                             e.preventDefault();
                             // 使用代理 URL
+                            const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                             const proxyUrl = externalPlayerAdBlock
-                              ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                              ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                               : videoUrl;
                             const isM3u8 = videoUrl.toLowerCase().includes('.m3u8') || videoUrl.toLowerCase().includes('/m3u8/');
 
@@ -3479,8 +3483,9 @@ function PlayPageClient() {
                           onClick={(e) => {
                             e.preventDefault();
                             // 使用代理 URL
+                            const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                             const proxyUrl = externalPlayerAdBlock
-                              ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                              ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                               : videoUrl;
                             // URL encode 避免冒号被吃掉
                             window.open(`potplayer://${proxyUrl}`, '_blank');
@@ -3503,8 +3508,9 @@ function PlayPageClient() {
                         onClick={(e) => {
                           e.preventDefault();
                           // 使用代理 URL
+                          const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                           const proxyUrl = externalPlayerAdBlock
-                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                             : videoUrl;
                           // URL encode 避免冒号被吃掉
                           window.open(`vlc://${proxyUrl}`, '_blank');
@@ -3527,8 +3533,9 @@ function PlayPageClient() {
                         onClick={(e) => {
                           e.preventDefault();
                           // 使用代理 URL
+                          const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                           const proxyUrl = externalPlayerAdBlock
-                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                             : videoUrl;
                           // URL encode 避免冒号被吃掉
                           window.open(`mpv://${proxyUrl}`, '_blank');
@@ -3551,8 +3558,9 @@ function PlayPageClient() {
                         onClick={(e) => {
                           e.preventDefault();
                           // 使用代理 URL
+                          const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                           const proxyUrl = externalPlayerAdBlock
-                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                             : videoUrl;
                           window.open(
                             `intent://${proxyUrl}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(
@@ -3579,8 +3587,9 @@ function PlayPageClient() {
                         onClick={(e) => {
                           e.preventDefault();
                           // 使用代理 URL
+                          const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                           const proxyUrl = externalPlayerAdBlock
-                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                             : videoUrl;
                           window.open(`nplayer-${proxyUrl}`, '_blank');
                         }}
@@ -3602,8 +3611,9 @@ function PlayPageClient() {
                         onClick={(e) => {
                           e.preventDefault();
                           // 使用代理 URL
+                          const tokenParam = proxyToken ? `&token=${encodeURIComponent(proxyToken)}` : '';
                           const proxyUrl = externalPlayerAdBlock
-                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}`
+                            ? `${window.location.origin}/api/proxy-m3u8?url=${encodeURIComponent(videoUrl)}&source=${encodeURIComponent(currentSource)}${tokenParam}`
                             : videoUrl;
                           window.open(
                             `iina://weblink?url=${encodeURIComponent(

@@ -54,15 +54,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // 检查是否有 Range 请求头
+    const range = request.headers.get('range');
+
+    // 构建上游请求头
+    const upstreamHeaders: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Referer': 'http://www.kuwo.cn/',
+    };
+
+    // 如果有 Range 请求，转发给上游
+    if (range) {
+      upstreamHeaders['Range'] = range;
+    }
+
     // 发起请求获取音频流
     const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': 'http://www.kuwo.cn/',
-      },
+      headers: upstreamHeaders,
     });
 
-    if (!response.ok) {
+    if (!response.ok && response.status !== 206) {
       return NextResponse.json(
         { error: '获取音频失败' },
         { status: response.status }
@@ -72,25 +83,27 @@ export async function GET(request: NextRequest) {
     // 获取响应头
     const contentType = response.headers.get('content-type') || 'audio/mpeg';
     const contentLength = response.headers.get('content-length');
+    const contentRange = response.headers.get('content-range');
+    const acceptRanges = response.headers.get('accept-ranges');
 
     // 创建响应头
     const headers: Record<string, string> = {
       'Content-Type': contentType,
       'Cache-Control': 'public, max-age=3600',
       'Access-Control-Allow-Origin': '*',
+      'Accept-Ranges': acceptRanges || 'bytes',
     };
 
     if (contentLength) {
       headers['Content-Length'] = contentLength;
     }
 
-    // 支持 Range 请求（用于音频拖动）
-    const range = request.headers.get('range');
-    if (range) {
-      headers['Accept-Ranges'] = 'bytes';
+    // 如果上游返回了 Content-Range，转发给客户端
+    if (contentRange) {
+      headers['Content-Range'] = contentRange;
     }
 
-    // 返回音频流
+    // 返回音频流，保持原始状态码（200 或 206）
     return new NextResponse(response.body, {
       status: response.status,
       headers,

@@ -65,6 +65,7 @@ export default function MusicPage() {
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [playlistIndex, setPlaylistIndex] = useState(-1); // 当前在播放列表中的索引
   const [showQualityMenu, setShowQualityMenu] = useState(false); // 音质选择菜单
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false); // 音量滑块显示状态
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
@@ -1047,8 +1048,19 @@ export default function MusicPage() {
 
       {/* Lyrics Modal */}
       {showLyrics && currentSong && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl h-[90vh] md:h-auto max-h-[90vh] bg-zinc-900/95 rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex flex-col">
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          onClick={(e) => {
+            // 点击背景关闭音量条
+            if (e.target === e.currentTarget) {
+              setShowVolumeSlider(false);
+            }
+          }}
+        >
+          <div
+            className="w-full max-w-2xl h-[90vh] md:h-auto max-h-[90vh] bg-zinc-900/95 rounded-2xl overflow-hidden border border-white/10 shadow-2xl flex flex-col"
+            onClick={() => setShowVolumeSlider(false)}
+          >
             {/* Header */}
             <div className="relative h-32 md:h-48 bg-gradient-to-b from-zinc-800 to-zinc-900 shrink-0">
               {currentSong.pic && (
@@ -1203,6 +1215,47 @@ export default function MusicPage() {
                     </svg>
                   )}
                 </button>
+                {/* 音量控制 */}
+                <div className="relative group">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowVolumeSlider(!showVolumeSlider);
+                    }}
+                    className="text-zinc-500 hover:text-white transition-colors"
+                    title="音量"
+                  >
+                    <svg className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  {/* 垂直音量条 - 桌面悬浮/移动端点击 */}
+                  <div
+                    className={`absolute bottom-full left-1/2 -translate-x-1/2 pb-2 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:pointer-events-auto ${showVolumeSlider ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="bg-zinc-800/95 backdrop-blur-sm rounded-lg p-3 shadow-xl border border-white/10">
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="text-xs text-zinc-400 font-mono">{volume}</span>
+                        <div className="h-24 w-1 bg-white/10 rounded-full relative">
+                          <div
+                            className="absolute bottom-0 left-0 right-0 bg-green-500 rounded-full transition-all pointer-events-none"
+                            style={{ height: `${volume}%` }}
+                          />
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={volume}
+                            onChange={handleVolumeChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer [writing-mode:bt-lr] [-webkit-appearance:slider-vertical]"
+                            orient="vertical"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* 进度条 */}

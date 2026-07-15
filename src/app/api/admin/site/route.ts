@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     const {
       SiteName,
       Announcement,
+      AnnouncementDisplayMode,
       SearchDownstreamMaxPage,
       SiteInterfaceCacheTime,
       DoubanProxyType,
@@ -39,21 +40,34 @@ export async function POST(request: NextRequest) {
       DoubanImageProxy,
       DisableYellowFilter,
       FluidSearch,
+      DanmakuSourceType,
       DanmakuApiBase,
       DanmakuApiToken,
+      DanmakuAutoLoadDefault,
       TMDBApiKey,
       TMDBProxy,
       TMDBReverseProxy,
+      BangumiDataSource,
+      BangumiApiBaseUrl,
+      BangumiImageBaseUrl,
+      BangumiProxy,
       BannerDataSource,
       RecommendationDataSource,
       PansouApiUrl,
       PansouUsername,
       PansouPassword,
       PansouKeywordBlocklist,
+      MagnetProxy,
+      MagnetMikanReverseProxy,
+      MagnetDmhyReverseProxy,
+      MagnetAcgripReverseProxy,
+      MagnetNyaaReverseProxy,
       EnableComments,
       CustomAdFilterCode,
       CustomAdFilterVersion,
       EnableRegistration,
+      RequireRegistrationInviteCode,
+      RegistrationInviteCode,
       RegistrationRequireTurnstile,
       LoginRequireTurnstile,
       TurnstileSiteKey,
@@ -72,6 +86,7 @@ export async function POST(request: NextRequest) {
     } = body as {
       SiteName: string;
       Announcement: string;
+      AnnouncementDisplayMode?: 'once' | 'every';
       SearchDownstreamMaxPage: number;
       SiteInterfaceCacheTime: number;
       DoubanProxyType: string;
@@ -80,21 +95,34 @@ export async function POST(request: NextRequest) {
       DoubanImageProxy: string;
       DisableYellowFilter: boolean;
       FluidSearch: boolean;
+      DanmakuSourceType?: 'builtin' | 'custom';
       DanmakuApiBase: string;
       DanmakuApiToken: string;
+      DanmakuAutoLoadDefault?: boolean;
       TMDBApiKey?: string;
       TMDBProxy?: string;
       TMDBReverseProxy?: string;
+      BangumiDataSource?: 'direct' | 'server-proxy' | 'custom-baseurl';
+      BangumiApiBaseUrl?: string;
+      BangumiImageBaseUrl?: string;
+      BangumiProxy?: string;
       BannerDataSource?: string;
       RecommendationDataSource?: string;
       PansouApiUrl?: string;
       PansouUsername?: string;
       PansouPassword?: string;
       PansouKeywordBlocklist?: string;
+      MagnetProxy?: string;
+      MagnetMikanReverseProxy?: string;
+      MagnetDmhyReverseProxy?: string;
+      MagnetAcgripReverseProxy?: string;
+      MagnetNyaaReverseProxy?: string;
       EnableComments: boolean;
       CustomAdFilterCode?: string;
       CustomAdFilterVersion?: number;
       EnableRegistration?: boolean;
+      RequireRegistrationInviteCode?: boolean;
+      RegistrationInviteCode?: string;
       RegistrationRequireTurnstile?: boolean;
       LoginRequireTurnstile?: boolean;
       TurnstileSiteKey?: string;
@@ -116,6 +144,9 @@ export async function POST(request: NextRequest) {
     if (
       typeof SiteName !== 'string' ||
       typeof Announcement !== 'string' ||
+      (AnnouncementDisplayMode !== undefined &&
+        AnnouncementDisplayMode !== 'once' &&
+        AnnouncementDisplayMode !== 'every') ||
       typeof SearchDownstreamMaxPage !== 'number' ||
       typeof SiteInterfaceCacheTime !== 'number' ||
       typeof DoubanProxyType !== 'string' ||
@@ -124,31 +155,74 @@ export async function POST(request: NextRequest) {
       typeof DoubanImageProxy !== 'string' ||
       typeof DisableYellowFilter !== 'boolean' ||
       typeof FluidSearch !== 'boolean' ||
+      (DanmakuSourceType !== undefined &&
+        DanmakuSourceType !== 'builtin' &&
+        DanmakuSourceType !== 'custom') ||
       typeof DanmakuApiBase !== 'string' ||
       typeof DanmakuApiToken !== 'string' ||
+      (DanmakuAutoLoadDefault !== undefined &&
+        typeof DanmakuAutoLoadDefault !== 'boolean') ||
       (TMDBApiKey !== undefined && typeof TMDBApiKey !== 'string') ||
       (TMDBProxy !== undefined && typeof TMDBProxy !== 'string') ||
-      (TMDBReverseProxy !== undefined && typeof TMDBReverseProxy !== 'string') ||
-      (BannerDataSource !== undefined && typeof BannerDataSource !== 'string') ||
-      (RecommendationDataSource !== undefined && typeof RecommendationDataSource !== 'string') ||
-      (PansouKeywordBlocklist !== undefined && typeof PansouKeywordBlocklist !== 'string') ||
+      (TMDBReverseProxy !== undefined &&
+        typeof TMDBReverseProxy !== 'string') ||
+      (BangumiDataSource !== undefined &&
+        BangumiDataSource !== 'direct' &&
+        BangumiDataSource !== 'server-proxy' &&
+        BangumiDataSource !== 'custom-baseurl') ||
+      (BangumiApiBaseUrl !== undefined &&
+        typeof BangumiApiBaseUrl !== 'string') ||
+      (BangumiImageBaseUrl !== undefined &&
+        typeof BangumiImageBaseUrl !== 'string') ||
+      (BangumiProxy !== undefined && typeof BangumiProxy !== 'string') ||
+      (BannerDataSource !== undefined &&
+        typeof BannerDataSource !== 'string') ||
+      (RecommendationDataSource !== undefined &&
+        typeof RecommendationDataSource !== 'string') ||
+      (PansouKeywordBlocklist !== undefined &&
+        typeof PansouKeywordBlocklist !== 'string') ||
+      (MagnetProxy !== undefined && typeof MagnetProxy !== 'string') ||
+      (MagnetMikanReverseProxy !== undefined &&
+        typeof MagnetMikanReverseProxy !== 'string') ||
+      (MagnetDmhyReverseProxy !== undefined &&
+        typeof MagnetDmhyReverseProxy !== 'string') ||
+      (MagnetAcgripReverseProxy !== undefined &&
+        typeof MagnetAcgripReverseProxy !== 'string') ||
+      (MagnetNyaaReverseProxy !== undefined &&
+        typeof MagnetNyaaReverseProxy !== 'string') ||
       typeof EnableComments !== 'boolean' ||
-      (CustomAdFilterCode !== undefined && typeof CustomAdFilterCode !== 'string') ||
-      (CustomAdFilterVersion !== undefined && typeof CustomAdFilterVersion !== 'number') ||
-      (EnableRegistration !== undefined && typeof EnableRegistration !== 'boolean') ||
-      (RegistrationRequireTurnstile !== undefined && typeof RegistrationRequireTurnstile !== 'boolean') ||
-      (LoginRequireTurnstile !== undefined && typeof LoginRequireTurnstile !== 'boolean') ||
-      (TurnstileSiteKey !== undefined && typeof TurnstileSiteKey !== 'string') ||
-      (TurnstileSecretKey !== undefined && typeof TurnstileSecretKey !== 'string') ||
+      (CustomAdFilterCode !== undefined &&
+        typeof CustomAdFilterCode !== 'string') ||
+      (CustomAdFilterVersion !== undefined &&
+        typeof CustomAdFilterVersion !== 'number') ||
+      (EnableRegistration !== undefined &&
+        typeof EnableRegistration !== 'boolean') ||
+      (RequireRegistrationInviteCode !== undefined &&
+        typeof RequireRegistrationInviteCode !== 'boolean') ||
+      (RegistrationInviteCode !== undefined &&
+        typeof RegistrationInviteCode !== 'string') ||
+      (RegistrationRequireTurnstile !== undefined &&
+        typeof RegistrationRequireTurnstile !== 'boolean') ||
+      (LoginRequireTurnstile !== undefined &&
+        typeof LoginRequireTurnstile !== 'boolean') ||
+      (TurnstileSiteKey !== undefined &&
+        typeof TurnstileSiteKey !== 'string') ||
+      (TurnstileSecretKey !== undefined &&
+        typeof TurnstileSecretKey !== 'string') ||
       (DefaultUserTags !== undefined && !Array.isArray(DefaultUserTags)) ||
       (EnableOIDCLogin !== undefined && typeof EnableOIDCLogin !== 'boolean') ||
-      (EnableOIDCRegistration !== undefined && typeof EnableOIDCRegistration !== 'boolean') ||
+      (EnableOIDCRegistration !== undefined &&
+        typeof EnableOIDCRegistration !== 'boolean') ||
       (OIDCIssuer !== undefined && typeof OIDCIssuer !== 'string') ||
-      (OIDCAuthorizationEndpoint !== undefined && typeof OIDCAuthorizationEndpoint !== 'string') ||
-      (OIDCTokenEndpoint !== undefined && typeof OIDCTokenEndpoint !== 'string') ||
-      (OIDCUserInfoEndpoint !== undefined && typeof OIDCUserInfoEndpoint !== 'string') ||
+      (OIDCAuthorizationEndpoint !== undefined &&
+        typeof OIDCAuthorizationEndpoint !== 'string') ||
+      (OIDCTokenEndpoint !== undefined &&
+        typeof OIDCTokenEndpoint !== 'string') ||
+      (OIDCUserInfoEndpoint !== undefined &&
+        typeof OIDCUserInfoEndpoint !== 'string') ||
       (OIDCClientId !== undefined && typeof OIDCClientId !== 'string') ||
-      (OIDCClientSecret !== undefined && typeof OIDCClientSecret !== 'string') ||
+      (OIDCClientSecret !== undefined &&
+        typeof OIDCClientSecret !== 'string') ||
       (OIDCButtonText !== undefined && typeof OIDCButtonText !== 'string') ||
       (OIDCMinTrustLevel !== undefined && typeof OIDCMinTrustLevel !== 'number')
     ) {
@@ -169,6 +243,7 @@ export async function POST(request: NextRequest) {
     adminConfig.SiteConfig = {
       SiteName,
       Announcement,
+      AnnouncementDisplayMode,
       SearchDownstreamMaxPage,
       SiteInterfaceCacheTime,
       DoubanProxyType,
@@ -177,21 +252,34 @@ export async function POST(request: NextRequest) {
       DoubanImageProxy,
       DisableYellowFilter,
       FluidSearch,
+      DanmakuSourceType,
       DanmakuApiBase,
       DanmakuApiToken,
+      DanmakuAutoLoadDefault,
       TMDBApiKey,
       TMDBProxy,
       TMDBReverseProxy,
+      BangumiDataSource,
+      BangumiApiBaseUrl,
+      BangumiImageBaseUrl,
+      BangumiProxy,
       BannerDataSource,
       RecommendationDataSource,
       PansouApiUrl,
       PansouUsername,
       PansouPassword,
       PansouKeywordBlocklist,
+      MagnetProxy,
+      MagnetMikanReverseProxy,
+      MagnetDmhyReverseProxy,
+      MagnetAcgripReverseProxy,
+      MagnetNyaaReverseProxy,
       EnableComments,
       CustomAdFilterCode,
       CustomAdFilterVersion,
       EnableRegistration,
+      RequireRegistrationInviteCode,
+      RegistrationInviteCode,
       RegistrationRequireTurnstile,
       LoginRequireTurnstile,
       TurnstileSiteKey,
